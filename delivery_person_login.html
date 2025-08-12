@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Person Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #01224a;
+        }
+        .login-container {
+            background-color: #d0ecfb;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            width: 350px;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            text-align: left;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .captcha-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .captcha {
+            font-weight: bold;
+            font-size: 18px;
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 5px;
+            letter-spacing: 3px;
+        }
+        .captcha-input {
+            width: 100px;
+        }
+        .login-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+        }
+        .login-btn:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            text-align: left;
+            display: none;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 15px;
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Delivery Person Login</h2>
+        <form id="loginForm">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <div id="email-error" class="error-message">Please enter a valid email address</div>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <div id="password-error" class="error-message">Password is required</div>
+
+            <div class="captcha-container">
+                <span class="captcha" id="captcha-text"></span>
+                <input type="text" id="captcha-input" class="captcha-input" placeholder="Enter Captcha" required>
+                <div id="captcha-error" class="error-message">Captcha is incorrect</div>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        <!-- Back Button -->
+        <a href="index.html" class="back-btn">← Back to Home</a>
+    </div>
+
+    <script>
+        function generateCaptcha() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let captcha = '';
+            for (let i = 0; i < 6; i++) {
+                captcha += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            document.getElementById('captcha-text').textContent = captcha;
+        }
+
+        function validateEmail(email) {
+            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        window.onload = function () {
+            generateCaptcha();
+
+            const emailInput = document.getElementById("email");
+            const emailError = document.getElementById("email-error");
+
+            emailInput.addEventListener("blur", function () {
+                if (!validateEmail(emailInput.value) && emailInput.value.trim() !== "") {
+                    emailError.style.display = "block";
+                    emailInput.style.borderColor = "#dc3545";
+                } else {
+                    emailError.style.display = "none";
+                    emailInput.style.borderColor = "#ccc";
+                }
+            });
+
+            emailInput.addEventListener("input", function () {
+                if (validateEmail(emailInput.value) || emailInput.value.trim() === "") {
+                    emailError.style.display = "none";
+                    emailInput.style.borderColor = "#ccc";
+                }
+            });
+        };
+
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const enteredCaptcha = document.getElementById("captcha-input").value;
+            const generatedCaptcha = document.getElementById("captcha-text").textContent;
+
+            if (enteredCaptcha === generatedCaptcha) {
+                let formData = new FormData(this);
+
+                fetch("delivery_person_login.php", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        if (data.includes("Login successful!")) {
+                            window.location.replace("delivery_person_dashboard.html");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("⚠️ Login failed. Please try again.");
+                    });
+            } else {
+                alert("Invalid Captcha! Please try again.");
+                generateCaptcha();
+            }
+        });
+    </script>
+</body>
+</html>

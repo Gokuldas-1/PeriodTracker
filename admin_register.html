@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #ff5e62;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #ff9966;
+        }
+
+        p {
+            margin-top: 15px;
+        }
+
+        a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Registration</h1>
+        <form id="adminRegisterForm">
+            <label for="adminName">Name:</label>
+            <input type="text" id="adminName" name="adminName" placeholder="Enter name" required>
+            
+            <label for="adminEmail">Email:</label>
+            <input type="email" id="adminEmail" name="adminEmail" placeholder="Enter email" required>
+            
+            <label for="adminPassword">Password:</label>
+            <input type="password" id="adminPassword" name="adminPassword" placeholder="Enter password" required>
+            
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="admin_login.html">Login here</a></p>
+    </div>
+
+    <script>
+        document.getElementById("adminRegisterForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent normal form submission
+
+            let formData = new FormData(this);
+
+            fetch("admin_register.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // Show success or error message
+                if (data.includes("successfully")) {
+                    window.location.href = "admin_login.html"; // Redirect to login page
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("⚠️ Registration failed. Please try again.");
+            });
+        });
+    </script>
+</body>
+</html>

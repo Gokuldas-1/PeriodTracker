@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login - Period Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            color: white;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 900px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .info-section, .login-section {
+            width: 50%;
+            padding: 40px;
+        }
+        .info-section {
+            background: #ff7eb3;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .info-section h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .quote {
+            font-size: 18px;
+            font-style: italic;
+            margin: 10px 0;
+        }
+        .login-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .login-box {
+            width: 100%;
+            max-width: 350px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .captcha-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .captcha {
+            background: #ddd;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+        }
+        .refresh {
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+        }
+        .login-btn {
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 6px;
+            transition: background 0.3s ease-in-out;
+        }
+        .login-btn:hover {
+            background-color: #218838;
+        }
+        .register-link {
+            margin-top: 15px;
+            display: block;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .back-btn {
+            margin-top: 20px;
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .info-section, .login-section {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="info-section">
+            <h1>Empower Women, Break the Stigma</h1>
+            <p class="quote">"She is clothed in strength and dignity, and she laughs without fear of the future."</p>
+            <p>Track your cycle, stay informed, and take control of your health with our easy-to-use period tracker.</p>
+        </div>
+
+        <div class="login-section">
+            <div class="login-box">
+                <h2>User Login</h2>
+                <form id="loginform" onsubmit="return validateCaptcha(event)" method="post" action="user_login.php">
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="captcha-box">
+                        <span id="captcha" class="captcha"></span>
+                        <button type="button" class="refresh" onclick="generateCaptcha()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Enter Captcha:</label>
+                        <input type="text" id="captchaInput" placeholder="Enter the captcha" required>
+                    </div>
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+                <p>Not have an account? <a href="user_register.php" class="register-link">Register here</a></p>
+                <a href="index.html" class="back-btn">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateCaptcha() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let captcha = '';
+            for (let i = 0; i < 6; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById("captcha").innerText = captcha;
+        }
+
+        document.getElementById("loginform").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let enteredCaptcha = document.getElementById("captchaInput").value;
+            let generatedCaptcha = document.getElementById("captcha").innerText;
+            
+            if (true) {
+                let formData = new FormData(this);
+
+                fetch("user_login.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    if (data.includes("Login successful!")) {
+                        window.location.replace("user_dashboard.html");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("⚠️ Login failed. Please try again.");
+                });
+            } else {
+                alert("Invalid Captcha! Please try again.");
+                generateCaptcha();
+            }
+        });
+
+        window.onload = generateCaptcha;
+    </script>
+
+</body>
+</html>

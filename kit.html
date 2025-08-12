@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Period Kits</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .kit-container {
+      width: 60%;
+      margin: auto;
+      padding: 30px;
+      background-color: #ffdde1;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      margin-top: 50px;
+    }
+    h2 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .kit-details, .kit-options {
+      text-align: left;
+      margin-top: 20px;
+    }
+    .kit-details ul {
+      list-style-type: square;
+      padding-left: 20px;
+      font-size: 18px;
+    }
+    .kit-options label {
+      display: block;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 10px;
+      background: white;
+      border-radius: 5px;
+      margin: 5px 0;
+      transition: all 0.3s;
+    }
+    .kit-options label:hover {
+      background: #ff7597;
+      color: white;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 18px;
+      transition: background 0.3s ease-in-out;
+    }
+    button:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="kit-container">
+    <h2>Period Kits</h2>
+
+    <div class="kit-details">
+      <h3>Basic Kit</h3>
+      <ul>
+        <li>Sanitary Pads (Regular)</li>
+        <li>Pain Relief Patches</li>
+        <li>Hygiene Wipes</li>
+        <li>Basic Comfort Tea</li>
+      </ul>
+
+      <h3>Premium Kit</h3>
+      <ul>
+        <li>Sanitary Pads (Premium & Overnight)</li>
+        <li>Menstrual Cup (Optional)</li>
+        <li>Pain Relief Patches</li>
+        <li>Hygiene Wipes</li>
+        <li>Luxury Herbal Tea</li>
+        <li>Essential Oil for Cramps</li>
+      </ul>
+    </div>
+
+    <div class="kit-options">
+      <h3>Select Your Kit</h3>
+      <label>
+        <input type="radio" name="kit" value="basic" checked> Basic Kit
+      </label>
+      <label>
+        <input type="radio" name="kit" value="premium"> Premium Kit
+      </label>
+    </div>
+
+    <button id="next-page" type="button">Next</button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const nextButton = document.getElementById("next-page");
+
+      nextButton.addEventListener("click", function () {
+        const selectedKit = document.querySelector('input[name="kit"]:checked').value;
+        localStorage.setItem("selectedKit", selectedKit);
+        window.location.href = "kit_selection.php?kit="+selectedKit;
+      });
+    });
+  </script>
+</body>
+</html>

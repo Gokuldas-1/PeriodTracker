@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        
+        header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        
+        .back-btn:hover {
+            background: #3e8e41;
+        }
+        
+        .inventory-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category {
+            margin-bottom: 30px;
+        }
+        
+        .category h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .stock-low {
+            color: red;
+            font-weight: bold;
+        }
+        
+        .stock-ok {
+            color: orange;
+        }
+        
+        .stock-good {
+            color: green;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .update-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .update-btn:hover {
+            background-color: #3e8e41;
+        }
+        
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .add-item {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .add-btn {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        
+        .add-btn:hover {
+            background-color: #0b7dda;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 5px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .submit-btn:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="admin_dashboard.php" class="back-btn">← Back to Dashboard</a>
+        <h1>Inventory Management</h1>
+    </header>
+    
+    <div class="inventory-container">
+        <div class="category">
+            <h2>Basic Kit Items</h2>
+            <table id="basic-items">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Price (₹)</th>
+                        <th>Available Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table data will be populated by JavaScript -->
+                </tbody>
+            </table> 
+            <div class="add-item">
+                <button class="add-btn" onclick="openAddModal('basic')">Add New Basic Item</button>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h2>Premium Kit Items</h2>
+            <table id="premium-items">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Price (₹)</th>
+                        <th>Available Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table data will be populated by JavaScript -->
+                </tbody>
+            </table>
+            <div class="add-item">
+                <button class="add-btn" onclick="openAddModal('premium')">Add New Premium Item</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Update Stock Modal -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Update Stock</h2>
+            <form id="updateStockForm" method="POST" action="inventory_update_stock.php" >
+                <input type="text" name="itemid" id="item-name" readonly hidden>
+                <div class="form-group">
+                    <label for="item-name">Item Name:</label>
+                    <input type="text" id="item-name" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="current-stock">Current Stock:</label>
+                    <input type="number" id="current-stock" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="new-stock">New Stock:</label>
+                    <input type="number" name="quantity" id="new-stock" required>
+                </div>
+                <input type="hidden" id="item-category">
+                <input type="hidden" id="item-index">
+                <button type="submit" class="submit-btn">Update Stock</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Item Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Item</h2>
+            <form id="addItemForm">
+                <div class="form-group">
+                    <label for="new-item-name">Item Name:</label>
+                    <input type="text" id="new-item-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-item-price">Price (₹):</label>
+                    <input type="number" id="new-item-price" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-item-stock">Initial Stock:</label>
+                    <input type="number" id="new-item-stock" required>
+                </div>
+                <input type="hidden" id="new-item-category">
+                <button type="submit" class="submit-btn">Add Item</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Inventory data
+        let inventory = {
+            basic: [
+                { name: "Sanitary Pads", price: 50, stock: 120 },
+                { name: "Pain Relief Patches", price: 60, stock: 85 },
+                { name: "Hygiene Wipes", price: 50, stock: 150 },
+                { name: "Basic Comfort Tea", price: 100, stock: 75 }
+            ],
+            premium: [
+                { name: "Sanitary Pads", price: 80, stock: 95 },
+                { name: "Menstrual Cup", price: 500, stock: 40 },
+                { name: "Pain Relief Patches", price: 60, stock: 70 },
+                { name: "Hygiene Wipes", price: 50, stock: 110 },
+                { name: "Luxury Herbal Tea", price: 200, stock: 65 },
+                { name: "Essential Oil for Cramps", price: 350, stock: 50 }
+            ]
+        };
+        
+        // DOM Elements
+        const updateModal = document.getElementById("updateModal");
+        const addModal = document.getElementById("addModal");
+        const updateStockForm = document.getElementById("updateStockForm");
+        const addItemForm = document.getElementById("addItemForm");
+        const closeButtons = document.querySelectorAll(".close");
+        
+        // Initialize the tables
+        document.addEventListener("DOMContentLoaded", function() {
+            populateTable("basic-items", inventory.basic);
+            populateTable("premium-items", inventory.premium);
+            
+            // Close modal when clicking on X
+            closeButtons.forEach(btn => {
+                btn.addEventListener("click", function() {
+                    updateModal.style.display = "none";
+                    addModal.style.display = "none";
+                });
+            });
+            
+            // Close modal when clicking outside of it
+            window.addEventListener("click", function(event) {
+                if (event.target === updateModal) {
+                    updateModal.style.display = "none";
+                }
+                if (event.target === addModal) {
+                    addModal.style.display = "none";
+                }
+            });
+            
+            // Handle update stock form submission
+           
+            
+            // Handle add item form submission
+            addItemForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+                const category = document.getElementById("new-item-category").value;
+                const name = document.getElementById("new-item-name").value;
+                const price = parseInt(document.getElementById("new-item-price").value);
+                const stock = parseInt(document.getElementById("new-item-stock").value);
+                
+                inventory[category].push({ name, price, stock });
+                populateTable(`${category}-items`, inventory[category]);
+                addModal.style.display = "none";
+                
+                alert(`${name} added successfully to ${category} inventory!`);
+            });
+        });
+        
+        // Function to populate table with data
+        function populateTable(tableId, items) {
+            const tableBody = document.querySelector(`#${tableId} tbody`);
+            tableBody.innerHTML = "";
+            
+            items.forEach((item, index) => {
+                const row = document.createElement("tr");
+                
+                // Define stock status class
+                let statusClass = "stock-good";
+                let statusText = "Good";
+                
+                if (item.stock < 30) {
+                    statusClass = "stock-low";
+                    statusText = "Low";
+                } else if (item.stock < 75) {
+                    statusClass = "stock-ok";
+                    statusText = "Moderate";
+                }
+                
+                const category = tableId.split("-")[0]; // Get category from table ID
+                
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>₹${item.price.toFixed(2)}</td>
+                    <td>${item.stock}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                    <td class="actions">
+                        <button class="update-btn" onclick="openUpdateModal('${category}', ${index})">Update Stock</button>
+                        <button class="delete-btn" onclick="deleteItem('${category}', ${index})">Delete</button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Function to open update modal
+        function openUpdateModal(category, index) {
+            const item = inventory[category][index];
+            document.getElementById("item-id").value = item.id;
+            document.getElementById("item-name").value = item.name;
+            document.getElementById("current-stock").value = item.stock;
+            document.getElementById("new-stock").value = item.stock;
+            document.getElementById("item-category").value = category;
+            document.getElementById("item-index").value = index;
+            
+            updateModal.style.display = "block";
+        }
+        
+        // Function to open add modal
+        function openAddModal(category) {
+            document.getElementById("new-item-name").value = "";
+            document.getElementById("new-item-price").value = "";
+            document.getElementById("new-item-stock").value = "";
+            document.getElementById("new-item-category").value = category;
+            
+            addModal.style.display = "block";
+        }
+        
+        // Function to delete item
+        function deleteItem(category, index) {
+            const itemName = inventory[category][index].name;
+            if (confirm(`Are you sure you want to delete ${itemName} from inventory?`)) {
+                inventory[category].splice(index, 1);
+                populateTable(`${category}-items`, inventory[category]);
+                alert(`${itemName} has been deleted from inventory.`);
+            }
+        }
+    </script>
+</body>
+</html>

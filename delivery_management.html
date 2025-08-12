@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Management</title>
+    <style>
+/* General Styles */
+body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+background-color: #032438;
+    color: #333;
+}
+
+/* Header */
+header {
+    background: #007bff;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Main Content */
+main {
+    width: 90%;
+    max-width: 900px;
+    margin: 20px auto;
+    background: rgb(189, 229, 250);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 80vh;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background: #e8f0ff;
+    border-radius: 8px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.btn {
+    background: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+}
+
+thead {
+    background: #007bff;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+tr:hover {
+    background: #f1f1f1;
+}
+
+/* Status Dropdown */
+.status-dropdown {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Buttons */
+.update-btn {
+    background: #ffc107;
+    color: black;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.update-btn:hover {
+    background: #e0a800;
+}
+
+.update-all-btn {
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.update-all-btn:hover {
+    background: #218838;
+}
+
+.back-btn {
+    background: #ff4d4d;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.back-btn:hover {
+    background: #cc0000;
+}
+
+/* Button Container - Moves Buttons to the Bottom */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding: 20px 0;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    main {
+        width: 95%;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    .btn, .update-all-btn, .back-btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    
+    
+    <main>
+        <section class="delivery-section">
+            <h2>Assign Delivery Person</h2>
+            <form id="assignDeliveryForm">
+                <label for="userId">User ID:</label>
+                <input type="text" id="userId" placeholder="Enter User ID" required>
+                
+                <label for="deliveryPersonId">Delivery Person ID:</label>
+                <input type="text" id="deliveryPersonId" placeholder="Enter Delivery Person ID" required>
+                
+                <button type="submit" class="btn">Assign</button>
+            </form>
+        </section>
+
+        <section class="status-section">
+            <h2>Update Delivery Status</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Delivery Person ID</th>
+                        <th>Status</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody id="deliveryTableBody">
+                    <!-- Dynamic rows will be added here -->
+                </tbody>
+            </table>
+        </section>
+        
+        <div class="button-container">
+            <button id="updateAllBtn" class="update-all-btn">Update All</button>
+            <a href="admin_dashboard.html" class="back-btn">Back</a>
+        </div>
+    </main>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+    const assignDeliveryForm = document.getElementById("assignDeliveryForm");
+    const deliveryTableBody = document.getElementById("deliveryTableBody");
+    const updateAllBtn = document.getElementById("updateAllBtn");
+
+    let deliveries = [];
+
+    // Handle form submission
+    assignDeliveryForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const userId = document.getElementById("userId").value.trim();
+        const deliveryPersonId = document.getElementById("deliveryPersonId").value.trim();
+
+        if (userId === "" || deliveryPersonId === "") {
+            alert("Please fill in both fields.");
+            return;
+        }
+
+        // Create new delivery entry
+        const newDelivery = {
+            userId,
+            deliveryPersonId,
+            status: "Pending"
+        };
+
+        deliveries.push(newDelivery);
+        updateDeliveryTable();
+        assignDeliveryForm.reset();
+    });
+
+    // Update the delivery table dynamically
+    function updateDeliveryTable() {
+        deliveryTableBody.innerHTML = "";
+
+        deliveries.forEach((delivery, index) => {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${delivery.userId}</td>
+                <td>${delivery.deliveryPersonId}</td>
+                <td>
+                    <select class="status-dropdown" data-index="${index}">
+                        <option value="Pending" ${delivery.status === "Pending" ? "selected" : ""}>Pending</option>
+                        <option value="Out for Delivery" ${delivery.status === "Out for Delivery" ? "selected" : ""}>Out for Delivery</option>
+                        <option value="Delivered" ${delivery.status === "Delivered" ? "selected" : ""}>Delivered</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="update-btn" data-index="${index}">Update</button>
+                </td>
+            `;
+
+            deliveryTableBody.appendChild(row);
+        });
+
+        // Add event listeners for individual update buttons
+        document.querySelectorAll(".update-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                const index = this.getAttribute("data-index");
+                const statusDropdown = document.querySelector(.status-dropdown[data-index="${index}"]);
+                deliveries[index].status = statusDropdown.value;
+                alert(Status updated for User ID ${deliveries[index].userId});
+            });
+        });
+    }
+
+    // Update all statuses at once
+    updateAllBtn.addEventListener("click", function() {
+        document.querySelectorAll(".status-dropdown").forEach(select => {
+            const index = select.getAttribute("data-index");
+            deliveries[index].status = select.value;
+        });
+        alert("All statuses updated successfully!");
+    });
+});
+
+    </script>
+</body>
+</html>

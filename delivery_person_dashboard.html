@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #ff4081;
+            color: white;
+            padding: 15px;
+            position: relative;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background-color: white;
+            color: #ff4081;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ff4081;
+            color: white;
+        }
+
+        select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .status-pending {
+            color: red;
+            font-weight: bold;
+        }
+
+        .status-delivered {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Delivery Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
+
+<main>
+    <h2>Assigned Deliveries</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Delivery ID</th>
+                <th>Kit Items</th>
+                <th>Delivery Address</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="deliveryList">
+            <!-- Data will be loaded dynamically -->
+        </tbody>
+    </table>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("delivery_person_dashboard.php")
+        .then(response => response.json())
+        .then(data => {
+            const deliveryList = document.getElementById("deliveryList");
+            deliveryList.innerHTML = "";
+
+            data.forEach(delivery => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${delivery.delivery_id}</td>
+                    <td>${delivery.kit_items}</td>
+                    <td>${delivery.address}</td>
+                    <td>
+                        <select data-id="${delivery.delivery_id}" class="status-select">
+                            <option value="Pending" ${delivery.status === "Pending" ? "selected" : ""}>Pending</option>
+                            <option value="Delivered" ${delivery.status === "Delivered" ? "selected" : ""}>Delivered</option>
+                        </select>
+                    </td>
+                `;
+                deliveryList.appendChild(row);
+            });
+
+            document.querySelectorAll(".status-select").forEach(select => {
+                select.addEventListener("change", function() {
+                    const deliveryId = this.getAttribute("data-id");
+                    const newStatus = this.value;
+
+                    fetch("delivery_person_dashboard.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: `delivery_id=${deliveryId}&status=${newStatus}`
+                    })
+                    .then(response => response.text())
+                    .then(response => {
+                        alert("Updated Successfully");
+                    });
+                });
+            });
+        });
+});
+
+// Logout function
+function logout() {
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

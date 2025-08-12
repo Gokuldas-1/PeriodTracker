@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Entry Form</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #ff5e62;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #ff9966;
+        }
+
+        p {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Delivery Entry</h1>
+        <form id="deliveryEntryForm">
+            <label for="did">Delivery ID (DID):</label>
+            <input type="text" id="did" name="did" placeholder="Enter DID" required>
+            
+            <label for="uid">User ID (UID):</label>
+            <input type="text" id="uid" name="uid" placeholder="Enter UID" required>
+            
+            <label for="kid">Kit ID (KID):</label>
+            <input type="text" id="kid" name="kid" placeholder="Enter KID" required>
+            
+            <label for="dpid">Delivery Person ID (DPID):</label>
+            <input type="text" id="dpid" name="dpid" placeholder="Enter DPID" required>
+            
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("deliveryEntryForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevents normal form submission
+
+            let formData = new FormData(this);
+
+            fetch("delivery_entry.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // Show success or error message
+                if (data.includes("Successfully")) {
+                    document.getElementById("deliveryEntryForm").reset(); // Reset form after success
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("⚠️ Submission failed. Please try again.");
+            });
+        });
+    </script>
+</body>
+</html>

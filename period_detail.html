@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periods Detail</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 45%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            color: #ff4a75;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-top: 12px;
+            color: #444;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 5px 15px rgba(255, 105, 135, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #ff4a75, #e63e66);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Periods Detail</h2>
+        <form id="periodForm" action="submit_periods_detail.php" method="post">
+            
+
+            <label for="last_period_date">Last Period Date:</label>
+            <input type="date" id="last_period_date" name="last_period_date" required>
+
+            <label for="avg_cycle">Average Period Cycle (days):</label>
+            <input type="number" id="avg_cycle" name="avg_cycle" required>
+
+            <label for="feedback">Your Feedback:</label>
+            <textarea id="feedback" name="feedback" rows="4" placeholder="Enter your feedback here..."></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("periodForm").addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                let formData = new FormData(this);
+
+                fetch("submit_periods_detail.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert("✅ Successfully Updated!");
+                    document.getElementById("periodForm").reset();
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("⚠️ An error occurred while submitting the form.");
+                });
+            });
+        });
+    </script>
+</body>
+</html>

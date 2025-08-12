@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Deliveries</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #ff4081;
+            color: white;
+            padding: 15px;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            width: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        label, select, input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ff4081;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Manage Deliveries</h1>
+</header>
+
+<!-- Add Delivery Form -->
+<form id="addDeliveryForm">
+    <label for="user_id">Select User:</label>
+    <select id="user_id" name="user_id"></select>
+
+    <label for="kit_id">Select Kit:</label>
+    <select id="kit_id" name="kit_id"></select>
+
+    <label for="dp_id">Select Delivery Person:</label>
+    <select id="dp_id" name="dp_id"></select>
+
+    <button type="submit">Add Delivery</button>
+</form>
+
+<!-- Display Deliveries Table -->
+<h2>Existing Deliveries</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Delivery ID</th>
+            <th>User ID</th>
+            <th>Kit ID</th>
+            <th>Delivery Person ID</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="deliveryTable"></tbody>
+</table>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("fetch_options.php")  // Load options for users, kits, and delivery persons
+        .then(response => response.json())
+        .then(data => {
+            const userSelect = document.getElementById("user_id");
+            const kitSelect = document.getElementById("kit_id");
+            const dpSelect = document.getElementById("dp_id");
+
+            data.users.forEach(user => {
+                let option = document.createElement("option");
+                option.value = user.user_id;
+                option.textContent = `User ${user.user_id} - ${user.name}`;
+                userSelect.appendChild(option);
+            });
+
+            data.kits.forEach(kit => {
+                let option = document.createElement("option");
+                option.value = kit.kit_id;
+                option.textContent = `Kit ${kit.kit_id} - ${kit.items}`;
+                kitSelect.appendChild(option);
+            });
+
+            data.delivery_persons.forEach(dp => {
+                let option = document.createElement("option");
+                option.value = dp.dp_id;
+                option.textContent = `DP ${dp.dp_id} - ${dp.name}`;
+                dpSelect.appendChild(option);
+            });
+        });
+
+    fetch("fetch_deliveries.php")  // Load deliveries table
+        .then(response => response.json())
+        .then(data => {
+            const deliveryTable = document.getElementById("deliveryTable");
+            data.forEach(delivery => {
+                let row = `<tr>
+                    <td>${delivery.delivery_id}</td>
+                    <td>${delivery.user_id}</td>
+                    <td>${delivery.kit_id}</td>
+                    <td>${delivery.dp_id}</td>
+                    <td>${delivery.status}</td>
+                </tr>`;
+                deliveryTable.innerHTML += row;
+            });
+        });
+
+    document.getElementById("addDeliveryForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        let formData = new FormData(this);
+
+        fetch("add_delivery.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.text())
+        .then(response => {
+            alert(response);
+            location.reload();  // Refresh the page to update table
+        });
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8bbd0;
+            text-align: center;
+        }
+        
+        .payment-container {
+            width: 60%;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffebee;
+            border-radius: 8px;
+            margin-top: 50px;
+        }
+        
+        h2, h3 {
+            color: #880e4f;
+        }
+        
+        #captcha-section {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #d81b60;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #ad1457;
+        }
+        
+        .success-message {
+            color: green;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h2>Payment Summary</h2>
+        
+        <ul id="selected-items"></ul>
+        
+        <h3>Total Amount: ₹<span id="total-amount">0</span></h3>
+        
+        <div id="captcha-section">
+            <h4>Verify CAPTCHA</h4>
+            <p id="captcha-question"></p>
+            <input type="number" id="captcha-answer" placeholder="Enter your answer">
+            <p id="captcha-error" style="color: red; display: none;">Incorrect answer! Try again.</p>
+        </div>
+        
+        <button id="confirm-payment">Confirm Order</button>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const selectedItemsList = document.getElementById("selected-items");
+            const totalAmountDisplay = document.getElementById("total-amount");
+            const captchaQuestion = document.getElementById("captcha-question");
+            const captchaAnswer = document.getElementById("captcha-answer");
+            const captchaError = document.getElementById("captcha-error");
+            const confirmPaymentBtn = document.getElementById("confirm-payment");
+            
+            let correctCaptchaAnswer = 0;
+            
+            // Retrieve stored products and total amount
+            const selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || [];
+            
+            // Calculate total amount from products
+            let totalAmount = 0;
+            selectedProducts.forEach(product => {
+                totalAmount += product.price * product.quantity;
+            });
+            
+            // Display selected products
+            selectedProducts.forEach(product => {
+                const li = document.createElement("li");
+                li.textContent = `${product.name} (x${product.quantity}) - ₹${product.price}`;
+                selectedItemsList.appendChild(li);
+            });
+            
+            // Display total amount
+            totalAmountDisplay.textContent = totalAmount;
+            
+            // Generate CAPTCHA
+            function generateCaptcha() {
+                let num1 = Math.floor(Math.random() * 10) + 1;
+                let num2 = Math.floor(Math.random() * 10) + 1;
+                captchaQuestion.textContent = `${num1} + ${num2} = ?`;
+                correctCaptchaAnswer = num1 + num2;
+            }
+            
+            generateCaptcha();
+            
+            // Handle Payment Confirmation
+            confirmPaymentBtn.addEventListener("click", function () {
+                // Always hide error message when the button is clicked
+                captchaError.style.display = "none";
+                
+                if (Number(captchaAnswer.value) !== correctCaptchaAnswer) {
+                    // Show error if captcha is incorrect
+                    captchaError.style.display = "block";
+                    return;
+                }
+                
+                // If captcha is correct
+                // 1. Show message
+                alert("Payment successful! Thank you for your order.");
+                
+                // 2. Store success message in sessionStorage to display on the next page
+                sessionStorage.setItem("paymentMessage", "Your payment was processed successfully!");
+                
+                // 3. Redirect to period_detail.html (fixed typo)
+                window.location.href = "period_detail.html";
+            });
+            
+            // Clear error message when user starts typing a new answer
+            captchaAnswer.addEventListener("input", function() {
+                captchaError.style.display = "none";
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kit Management</title>
+  <style>
+    /* General styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: rgb(53, 51, 71);
+    }
+
+    .container {
+      display: flex;
+      padding: 20px;
+      gap: 30px;
+      margin: 20px;
+    }
+
+    /* Left section styles (kit items display) */
+    .left-side {
+      width: 45%;
+      background-color: rgb(133, 114, 178);
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2, h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .kit-section {
+      margin-bottom: 20px;
+    }
+
+    .kit-section h3 {
+      color: #011015;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    li {
+      padding: 8px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      margin: 5px 0;
+      border-radius: 4px;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .item-price {
+      font-weight: bold;
+      color: #008CBA;
+    }
+
+    /* Right section styles (form to add items) */
+    .right-side {
+      width: 45%;
+      background-color: rgb(133, 114, 178);
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    form {
+      background-color: papayawhip;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    input, select {
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #008CBA;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    /* Back Button styling */
+    #backButton {
+      padding: 10px 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+      width: 50%;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      font-size: 16px;
+    }
+
+    #backButton:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-side">
+      <h2>Kit Items</h2>
+      
+      <div class="kit-section">
+        <h3>Premium Kit</h3>
+        <ul id="premium-kit-items">
+          <!-- Premium kit items will be dynamically added here -->
+        </ul>
+      </div>
+
+      <div class="kit-section">
+        <h3>Basic Kit</h3>
+        <ul id="basic-kit-items">
+          <!-- Basic kit items will be dynamically added here -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="right-side">
+      <h2>Add New Item</h2>
+      
+      <form id="addItemForm">
+        <input type="text" id="newItem" placeholder="Enter new item name" required><br>
+        
+        <input type="number" id="itemPrice" placeholder="Enter item price" required min="1"><br>
+        
+        <label for="itemCategory">Category:</label>
+        <select id="itemCategory">
+          <option value="premium">Premium</option>
+          <option value="basic">Basic</option>
+        </select><br>
+        
+        <button type="submit">Add Item</button>
+      </form>
+      
+      <!-- Back Button -->
+      <button id="backButton">Go Back</button>
+    </div>
+  </div>
+
+  <script>
+    // Initialize arrays for the kit items with prices
+    let premiumItems = [
+      { name: "Sanitary Pads", price: 80 },
+      { name: "Menstrual Cup", price: 500 },
+      { name: "Pain Relief Patches", price: 60 },
+      { name: "Hygiene Wipes", price: 50 },
+      { name: "Luxury Herbal Tea", price: 200 },
+      { name: "Essential Oil for Cramps", price: 300 }
+    ];
+
+    let basicItems = [
+      { name: "Sanitary Pads", price: 50 },
+      { name: "Pain Relief Patches", price: 60 },
+      { name: "Hygiene Wipes", price: 50 },
+      { name: "Basic Comfort Tea", price: 100 }
+    ];
+
+    // Function to dynamically add items to the left section
+    function updateKitSections() {
+      document.getElementById('premium-kit-items').innerHTML = premiumItems.map(item => 
+        `<li>${item.name} <span class="item-price">₹${item.price}</span></li>`
+      ).join('');
+      
+      document.getElementById('basic-kit-items').innerHTML = basicItems.map(item => 
+        `<li>${item.name} <span class="item-price">₹${item.price}</span></li>`
+      ).join('');
+    }
+
+    // Call the update function initially
+    updateKitSections();
+
+    // Function to handle adding a new item
+    document.getElementById('addItemForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Get the new item name, price and category
+      const newItemName = document.getElementById('newItem').value;
+      const newItemPrice = parseInt(document.getElementById('itemPrice').value);
+      const category = document.getElementById('itemCategory').value;
+
+      // Create the new item object
+      const newItem = {
+        name: newItemName,
+        price: newItemPrice
+      };
+
+      // Add the new item to the appropriate category array
+      if (category === "premium") {
+        premiumItems.push(newItem);
+      } else if (category === "basic") {
+        basicItems.push(newItem);
+      }
+
+      // Update the left side sections
+      updateKitSections();
+
+      // Clear the form fields
+      document.getElementById('newItem').value = '';
+      document.getElementById('itemPrice').value = '';
+    });
+
+    // Redirect to admin_dashboard.php when the Back button is clicked
+    document.getElementById('backButton').addEventListener('click', function() {
+      window.location.href = "admin_dashboard.php";
+    });
+  </script>
+</body>
+</html>
